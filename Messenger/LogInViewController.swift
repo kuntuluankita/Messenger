@@ -45,19 +45,37 @@ class LogInViewController: UIViewController {
         super.viewDidLoad()
         updateUIFor(logIn: true )
         setupTextFieldDelegates()
+        setupBackgroundTap()
     }
     
     //Button action
     
     @IBAction func loginButtonPressed(_ sender: UIButton) {
         
+        if isDataInputedFor(type: isLogin ? "login" : "register") {
+            
+        }else {
+            myAlertPopUp(myTitle: "Alert", myMessage: "All fields are required")
+        }
     }
     
     @IBAction func resendEmailButtonPressed(_ sender: UIButton) {
         
+        if isDataInputedFor(type: "Password") {
+            
+        }else {
+            myAlertPopUp(myTitle: "Alert", myMessage: "Email is required")
+        }
+        
     }
     
     @IBAction func forgotPasswordButtonPressed(_ sender: UIButton) {
+        
+        if isDataInputedFor(type: "Password") {
+            
+        }else {
+            myAlertPopUp(myTitle: "Alert", myMessage: "Email is required")
+        }
         
     }
     
@@ -78,10 +96,20 @@ class LogInViewController: UIViewController {
         updatePlaceHolderLabel(textField: textField)
     }
     
+    private func setupBackgroundTap() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(backgroundTap))
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func backgroundTap() {
+        view.endEditing(false)
+        self.dismiss(animated: false)
+    }
+    
     //Animation
     
     private func updateUIFor(logIn: Bool) {
-        loginButtonOutlet.setImage(UIImage(named: logIn ? "loginbtn" : "registerbtn"), for: .normal)
+        loginButtonOutlet.setImage(UIImage(named: logIn ? "loginBtn" : "registerBtn"), for: .normal)
         signUpButtonOutlet.setTitle(logIn ? "SignUp": "Login", for: .normal)
         signupLabelOutlet.text = logIn ? "Don't have an account ?": "Have an accont ?"
         UIView.animate(withDuration: 0.5) {
@@ -111,6 +139,24 @@ class LogInViewController: UIViewController {
             repeatPasswordLabelOutlet.text = textField.hasText ? "Repeat Password" : ""
         }
     }
-
+    // Helper
+    private func isDataInputedFor(type: String) -> Bool {
+        switch type {
+        case "login":
+            return emailTextField.text != "" && passwordTextField.text != ""
+        case "registration":
+            return emailTextField.text != "" && passwordTextField.text != "" && repeatPasswordTextField.text != ""
+        default:
+            return emailTextField.text != ""
+        }
+    }
 }
 
+extension LogInViewController{
+    func myAlertPopUp(myTitle: String, myMessage: String){
+        let alertController = UIAlertController(title: myTitle, message: myMessage, preferredStyle: .alert)
+        // Present the alert
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alertController, animated: true, completion: nil)
+    }
+}
